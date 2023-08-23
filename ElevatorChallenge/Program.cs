@@ -3,20 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using ElevatorChallenge;
 
+FileLogger log = new FileLogger();
+
 buttons elevatorButtons = new buttons(1,1);
 sensor elevatorSensor = sensor.createSensor(10, 1, 1, 1000, 1, 1, false);
 elevator elevator = new elevator(1,1,0,false);
 Thread sensorThread = new Thread(() => elevatorSensor.updtdateDirectionForever());
 sensorThread.Start();
-Thread runElevatorThread = new Thread(() => elevatorSensor.runElevatorForever(elevator));
+Thread runElevatorThread = new Thread(() => elevatorSensor.runElevatorForever(elevator, log));
 runElevatorThread.Start();
-Thread readInputsForButtons = new Thread(() => readInput(elevatorButtons));
+Thread readInputsForButtons = new Thread(() => readInput(elevatorButtons, log));
 readInputsForButtons.Start();
 
 readInputsForButtons.Join();
@@ -25,7 +28,7 @@ runElevatorThread.Join();
 
 
 //This method reads user input and updates the button and sensor objects accordingly. The sensorScan method updates the destination floor.
- void readInput(buttons elevatorButtons)
+ void readInput(buttons elevatorButtons, FileLogger log)
 {
     string alphaPart = "t";
     do
@@ -43,12 +46,16 @@ runElevatorThread.Join();
         {
             if (floorDirection == "q" || floorDirection == "Q")
             {
-                gelevatorButtons.setQuit(true);
+                elevatorButtons.setQuit(true);
                 elevatorButtons.updateSensor(elevatorSensor);
                 break;
             }
             int floorNumber = int.Parse(floorDirection);
             elevatorButtons.setFloor(floorNumber);
+
+            //logging the request
+            log.Log("Elevator button " + floorNumber + " pressed.");
+
             elevatorButtons.updateSensorElevatorButton(elevatorSensor);
 
             Console.WriteLine("Current Floor: " + elevatorSensor.getCurrentFloor() + " Destination Floor: " + elevatorSensor.getDestinationFloor() + " Direction: " + elevatorSensor.getDirection() + " Moving: " + elevatorSensor.getMoving());
@@ -75,17 +82,39 @@ runElevatorThread.Join();
                 {
                     elevatorButtons.setDirection(1);
                     elevatorButtons.setFloor(numericPart);
-                    Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
+                    //Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
                 }
                 else if (alphaPart == "D" || alphaPart == "d")
                 {
                     elevatorButtons.setDirection(2);
                     elevatorButtons.setFloor(numericPart);
-                    Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
+                    //Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
                 }
                 elevatorButtons.updateSensor(elevatorSensor);
-                Console.WriteLine("Current Floor: " + elevatorSensor.getCurrentFloor() + " Destination Floor: " + elevatorSensor.getDestinationFloor() + " Direction: " + elevatorSensor.getDirection() + " Moving: " + elevatorSensor.getMoving());
+                //Console.WriteLine("Current Floor: " + elevatorSensor.getCurrentFloor() + " Destination Floor: " + elevatorSensor.getDestinationFloor() + " Direction: " + elevatorSensor.getDirection() + " Moving: " + elevatorSensor.getMoving());
+                log.Log("Elevator button " + numericPart + "Going: "+ floorDirection + " " + " pressed.");
             }
         }
     } while (alphaPart != "Q" || alphaPart != "q");
 }
+//Class designed to output to a log file
+public class FileLogger 
+{
+    private string filePath = @"D:\Logs\Log.txt";
+        public void Log(string message)
+    {
+        String timeStamp = GetTimestamp(DateTime.Now);
+        Directory.CreateDirectory(@"D:\Logs");
+        using (StreamWriter streamWriter = new StreamWriter(filePath, append: true))
+        {
+            streamWriter.WriteLine( timeStamp + message);
+            streamWriter.Close();
+        }
+    }
+
+    public static String GetTimestamp(DateTime value)
+    {
+        return value.ToString("yyyyMMddHHmmssffff");
+    }
+}
+

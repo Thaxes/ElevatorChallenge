@@ -111,24 +111,24 @@ namespace ElevatorChallenge
             }
         }
         //because the functions are set up to only execute if conditions are met, call them all in a loop to execute whichever applies.
-        public void runElevatorForever(elevator elevator)
+        public void runElevatorForever(elevator elevator, FileLogger log)
         {
             while (true)
             {
                 //if going up, move up
-                moveElevatorUp();
+                moveElevatorUp(log);
                 //if going down, move down
-                moveElevatorDown();
+                moveElevatorDown(log);
                 //if going up and elevator is at up destination, stop
-                visitDestUp();
+                visitDestUp(log);
                 //if going down and elevator is at down destination, stop
-                visitDestDown();
+                visitDestDown(log);
                 //if elevator is at destination, stop
-                vistDestElevator();
+                vistDestElevator(log);
                 //update the elevator
                 updateElevator(elevator);
                 //write information about what the elevator is doing
-                Console.WriteLine("Current Floor: " + currentFloor + " " + "Direction: " + direction + " " + "Destination floor:" + destinationFloor);
+                Console.WriteLine("Current Floor: " + currentFloor + " " + "Direction: " + direction + " " + "Destination floor:" + destinationFloor + " " + "Moving:" + moving);
                 //if quitElevator is true, break the loop
                 if (quitElevator == true)
                 {
@@ -329,54 +329,59 @@ namespace ElevatorChallenge
             return false;
         }
         //if current floor is destination floor and going in the correct direction, stop.
-        public void visitDestUp()
+        public void visitDestUp(FileLogger log)
         {   //if the elevator is not going down and the current floor is the destination floor, stop.
             if (direction != 2 && currentFloor == destinationFloor)
             {
                 setMoving(false);
                 offButtonsUp(currentFloor);
                 Console.WriteLine("All going Up, aboard!");
+                log.Log("Stopping at floor: " + currentFloor);
                 Thread.Sleep(1000);
             }
         }
         //if current floor is destination floor and going in the correct direction, stop.
-        public void visitDestDown()      
+        public void visitDestDown(FileLogger log)      
         {   //if the current direction is not up and this is the destination floor, stop.
             if (direction != 1 && currentFloor == destinationFloor)
             {
                 setMoving(false);
                 offButtonsDown(currentFloor);
+                log.Log("Stopping at floor: " + currentFloor);
                 Console.WriteLine("All going Down, aboard!");
                 Thread.Sleep(1000);
             }
         }
-        public void vistDestElevator()
+        public void vistDestElevator(FileLogger log)
         {   //if the current floor is the destination floor set from inside the elevator, stop.
             if (ButtonsElevator(currentFloor) == true)
             {
                 setMoving(false);
                 offElevatorButtons(currentFloor);
                 Console.WriteLine("This is a stop for floor: " + currentFloor);
+                log.Log("Stopping at floor: " + currentFloor + " " + "at request of elevator occupants.");
                 Thread.Sleep(1000);
             }
         }
         //move the elevator one floor up. Wait three seconds.
-        public void moveElevatorUp()
+        public void moveElevatorUp(FileLogger log)
         {
            if (currentFloor < destinationFloor)
             {
                 setMoving(true);
                 Thread.Sleep(3000);
+                log.Log("Passing floor: " + currentFloor + " on the way to floor: " + destinationFloor + ".");
                 currentFloor++;
             }   
         }
         //Move the elevator one floor down. Wait three seconds.
-        public void moveElevatorDown()
+        public void moveElevatorDown(FileLogger log)
         {
             if (currentFloor > destinationFloor)
             {
                 setMoving(true);
                 Thread.Sleep(3000);
+                log.Log("Passing floor: " + currentFloor + " on the way to floor: " + destinationFloor + ".");
                 currentFloor--;
             }
         }
