@@ -19,6 +19,7 @@ namespace ElevatorChallenge
             this.floor = floor;
             this.direction = direction;
         }
+        //getters and setters
         public int getFloor()
         {
             return floor;
@@ -35,6 +36,7 @@ namespace ElevatorChallenge
         {
             this.direction = direction;
         }
+        //update the sensor object with the floor and direction flags
         public void updateSensor(sensor elevatorSensor)
         {
             if (this.direction == true)
@@ -48,6 +50,11 @@ namespace ElevatorChallenge
                 if (floor > 0 && floor < elevatorSensor.getFloorLimit())
                     elevatorSensor.onButtonsDown(floor);
             }
+        }
+        public void updateSensorElevatorButton(sensor elevatorSensor)
+        {
+            if (floor > 0 && floor < elevatorSensor.getFloorLimit())
+                elevatorSensor.onElevatorButtons(floor);
         }
 
     }
@@ -214,8 +221,8 @@ namespace ElevatorChallenge
                     if (i > floorLimit)
                     {
                         return false ;
-                    } //checks if someone wants to go up or stop on the way
-                    if (ButtonsUp(i) == true || ButtonsElevator(i) == true)
+                    } //checks if someone wants to go up or stop on the way. Do not update destination to a further away floor.
+                    if ((ButtonsUp(i) == true || ButtonsElevator(i) == true) && destinationFloor > i)
                     {
                         destinationFloor = i;
                         return true;
@@ -235,7 +242,7 @@ namespace ElevatorChallenge
                     if (i > floorLimit)
                     {
                         return false;
-                    }   //checks if someone wants to go up or stop on the way
+                    }   //checks if someone wants to go up or stop on the way. Do not update destination to a further away floor.
                     if (ButtonsUp(i) == true || ButtonsElevator(i) == true)
                     {
                         destinationFloor = i;
@@ -256,8 +263,8 @@ namespace ElevatorChallenge
                     if (i < 1)
                     {
                         return false;
-                    }   //check if someone wants to go down or stop on the way
-                    if (ButtonsDown(i) == true || ButtonsElevator(i) == true)
+                    }   //check if someone wants to go down or stop on the way. Do not update destination to a further away floor.
+                    if ((ButtonsDown(i) == true || ButtonsElevator(i) == true) && destinationFloor < i)
                     {
                         destinationFloor = i;
                         return true;
@@ -359,88 +366,107 @@ namespace ElevatorChallenge
         {
             return buttonsDown[floor - 1];
         }
-
+        //return true if the floor is flagged to stop at.
         public bool ButtonsElevator(int floor)
         {
             return elevatorButtons[floor - 1];
         }
+        //return the number of floors in the building.
         public int getFloorLimit()
         {
             return floorLimit;
         }
+        //return the current floor the elevator is on.
         public int getCurrentFloor()
         {
             return currentFloor;
         }
+        //return the destination floor.
         public int getDestinationFloor()
         {
             return destinationFloor;
         }
+        //return the weight limit of the elevator.
         public int getWeightLimit()
         {
             return weightLimit;
         }
+        //return the current weight of the elevator.
         public int getCurrentWeight()
         {
             return currentWeight;
         }
-        //getDirection 0 if stopped, 1 if up, 2 if down
+        //getDirection 0 if stopped, 1 if up, 2 if down. Could be changed to boolean when used with the moving variable.
         public int getDirection()
         {
             return direction;
         }
+        //return true if the elevator is moving.
         public bool getMoving()
         {
             return moving;
         }
+        //set a floor to be flagged for stopping when going up.
         public void onButtonsUp(int floor)
         {
             buttonsUp[floor -1] = true;
         }
+        //set a floor to be flagged for stopping when going down.
         public void onButtonsDown(int floor)
         {
             buttonsDown[floor - 1] = true;
         }
+        //set a floor to be flagged for stopping when inside the elevator.
         public void onElevatorButtons(int floor)
         {
             elevatorButtons[floor - 1] = true;
         }
+        //disable a floor from being flagged for stopping when going up.
         public void offButtonsUp(int floor)
         {
             buttonsUp[floor - 1] = false;
         }
+        //disable a floor from being flagged for stopping when going down.
         public void offButtonsDown(int floor)
         {
             buttonsDown[floor - 1] = false;
         }
+        //disable a floor from being flagged for stopping when inside the elevator.
         public void offElevatorButtons(int floor)
         {
             elevatorButtons[floor - 1] = false;
         }
+        //set the number of floors in the building.
         public void setFloorLimit(int floorLimit)
         {
             this.floorLimit = floorLimit;
         }
+        //set the current floor the elevator is on.
         public void setCurrentFloor(int currentFloor)
         {
             this.currentFloor = currentFloor;
         }
+        //set the destination floor.
         public void setDestinationFloor(int DestinationFloor)
         {
             this.destinationFloor = DestinationFloor;
         }
+        //set the weight limit of the elevator.
         public void setWeightLimit(int weightLimit)
         {
             this.weightLimit = weightLimit;
         }
+        //set the current weight of the elevator.
         public void setCurrentWeight(int currentWeight)
         {
             this.currentWeight = currentWeight;
         }
+        //set the direction of the elevator.
         public void setDirection(int direction)
         {
             this.direction = direction;
         }
+        //set the moving variable to true or false.
         public void setMoving(bool moving)
         {
             this.moving = moving;
@@ -454,7 +480,7 @@ namespace ElevatorChallenge
         int destinationFloor;
         int direction;
         bool moving;
-
+        //Create an elevator with the current floor, destination floor, direction, and moving status.
         public elevator(int currentFloor, int destinationFloor, int direction, bool moving)
         {
             this.currentFloor = currentFloor;
@@ -462,7 +488,7 @@ namespace ElevatorChallenge
             this.direction = direction;
             this.moving = moving;
         }
-
+        //get | set methods for the elevator.
         public int getCurrentFloor()
         {
             return currentFloor;
@@ -495,7 +521,6 @@ namespace ElevatorChallenge
         {
             this.moving = moving;
         }
-
         internal void setCurrentWeight(int currentWeight)
         {
             this.currentFloor = currentWeight;

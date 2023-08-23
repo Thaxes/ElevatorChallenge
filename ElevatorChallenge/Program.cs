@@ -32,41 +32,55 @@ readInput(elevatorButtons);
         Console.WriteLine("Enter the floor number and direction, denoted as U or D, without spaces: ");
         //Save user input to a variable
         var floorDirection = Console.ReadLine();
-        //evaluate if the user input follows the regex expression
-        Match result = re.Match(floorDirection);
-        //if the user input does not follow the regex expression, prompt the user to re-enter the input
-        while (!result.Success)
+        //check if it comes from inside the elevator
+        if (floorDirection.Length < 2 && floorDirection.Length > 0)
         {
-            Console.WriteLine("Invalid input. Please enter the floor number and direction, denoted as U or D, without spaces: ");
-            floorDirection = Console.ReadLine();
-            result = re.Match(floorDirection);
-        }
-        //if the user input follows the regex expression, save the floor number and direction to the button object
-        if (result.Success)
-        {
-            alphaPart = result.Groups[2].Value;
-            int numericPart = Int32.Parse(result.Groups[1].Value);
-
-            if (alphaPart == "u" || alphaPart == "U")
-            {
-                elevatorButtons.setDirection(true);
-                elevatorButtons.setFloor(numericPart);
-                Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
-            }
-            else if (alphaPart == "D" || alphaPart == "d")
-            {
-                elevatorButtons.setDirection(false);
-                elevatorButtons.setFloor(numericPart);
-                Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
-            }
-            else if (alphaPart == "Q" || alphaPart == "q")
-            {
-                quit = true;
-                break;
-            }
-            elevatorButtons.updateSensor(elevatorSensor);
+            int floorNumber = int.Parse(floorDirection);
+            elevatorButtons.setFloor(floorNumber);
+            elevatorButtons.updateSensorElevatorButton(elevatorSensor);
             //elevatorSensor.sensorScan();
             Console.WriteLine("Current Floor: " + elevatorSensor.getCurrentFloor() + " Destination Floor: " + elevatorSensor.getDestinationFloor() + " Direction: " + elevatorSensor.getDirection() + " Moving: " + elevatorSensor.getMoving());
+        }
+        else
+        {
+
+
+            //evaluate if the user input follows the regex expression
+            Match result = re.Match(floorDirection);
+            //if the user input does not follow the regex expression, prompt the user to re-enter the input
+            while (!result.Success)
+            {
+                Console.WriteLine("Invalid input. Please enter the floor number and direction, denoted as U or D, without spaces: ");
+                floorDirection = Console.ReadLine();
+                result = re.Match(floorDirection);
+            }
+            //if the user input follows the regex expression, save the floor number and direction to the button object
+            if (result.Success)
+            {
+                alphaPart = result.Groups[2].Value;
+                int numericPart = Int32.Parse(result.Groups[1].Value);
+
+                if (alphaPart == "u" || alphaPart == "U")
+                {
+                    elevatorButtons.setDirection(true);
+                    elevatorButtons.setFloor(numericPart);
+                    Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
+                }
+                else if (alphaPart == "D" || alphaPart == "d")
+                {
+                    elevatorButtons.setDirection(false);
+                    elevatorButtons.setFloor(numericPart);
+                    Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
+                }
+                else if (alphaPart == "Q" || alphaPart == "q")
+                {
+                    quit = true;
+                    break;
+                }
+                elevatorButtons.updateSensor(elevatorSensor);
+                //elevatorSensor.sensorScan();
+                Console.WriteLine("Current Floor: " + elevatorSensor.getCurrentFloor() + " Destination Floor: " + elevatorSensor.getDestinationFloor() + " Direction: " + elevatorSensor.getDirection() + " Moving: " + elevatorSensor.getMoving());
+            }
         }
     } while (alphaPart != "Q" || alphaPart != "q");
 }
