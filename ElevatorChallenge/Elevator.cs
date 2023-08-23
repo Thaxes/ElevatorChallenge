@@ -60,6 +60,8 @@ namespace ElevatorChallenge
                 if (floor > 0 && floor < elevatorSensor.getFloorLimit())
                     elevatorSensor.onButtonsDown(floor);
             }
+            if (quit == true)
+                elevatorSensor.setQuit(true);
         }
         public void updateSensorElevatorButton(sensor elevatorSensor)
         {
@@ -78,6 +80,7 @@ namespace ElevatorChallenge
         private int direction;
         private bool moving;
         private bool quit;
+        private bool quitElevator;
         private bool[] buttonsUp;
         private bool[] buttonsDown;
         private bool[] elevatorButtons;
@@ -126,6 +129,12 @@ namespace ElevatorChallenge
                 updateElevator(elevator);
                 //write information about what the elevator is doing
                 Console.WriteLine("Current Floor: " + currentFloor + " " + "Direction: " + direction + " " + "Destination floor:" + destinationFloor);
+                //if quitElevator is true, break the loop
+                if (quitElevator == true)
+                {
+                    Console.WriteLine("Elevator has quit");
+                    break;
+                }
             }
         }
         //Updates the direction of the elevator in all situations.
@@ -134,15 +143,22 @@ namespace ElevatorChallenge
             while(true)
             {
                 //if moving up, update destination
-                updtDestWhileUpMoving();
+                bool x = updtDestWhileUpMoving();
                 //if moving down, update destination
-                updtDestWhileDownMoving();
-                //if still, update direction
-                updtDirectionUniAtRest();
+                bool y = updtDestWhileDownMoving();
+                //if still, update direction. If return is true, there is NOT a button pressed.
+                 bool z = updtDirectionUniAtRest();
+
+                //if no buttons are pressed and elevator is still and quit has been entered, quit.
+                if (x == false && y == false && z == false && quit == true)
+                {
+                    setQuitElevator(true);
+                    break;
+                }
             }
         }
         //If the elevator is still and no buttons are pressed, it will scan for the closest floor with a button pressed.
-        private void updtDirectionUniAtRest()
+        private bool updtDirectionUniAtRest()
         {   
 
             //evaluate if there are any buttons pressed
@@ -152,7 +168,10 @@ namespace ElevatorChallenge
             
             //if the above are false and elevator is not moving, start scanning for the nearest floor with a button pressed
             if (x == false && y == false && moving == false)
-            {//repeat this for loop but in the opposite direction to check for every floor.
+            {   
+                //if return is true, there is NOT a button currently pressed.
+                
+                //repeat this for loop but in the opposite direction to check for every floor.
                 for (int i = currentFloor; i >= 1; i--)
                 {
                     int j = currentFloor;
@@ -221,12 +240,9 @@ namespace ElevatorChallenge
                         }
                     }
                 }
+                return false;
             }
-            else if ()
-            {
-                //quit thread
-
-            }
+            return true;
         }
         //if elevator is moving up, it will scan for the next floor with a button pressed. It will skip the very next floor because it is already going up. It will return true if it finds a button.
         public bool updtDestWhileUpMoving()
@@ -496,6 +512,15 @@ namespace ElevatorChallenge
         {
             this.moving = moving;
         }
+        public bool getQuitElevator()
+        {
+            return quitElevator;
+        }
+        public void setQuitElevator(bool quitElevator)
+        {
+            this.quitElevator = quitElevator;
+        }
+
 
 
     }
