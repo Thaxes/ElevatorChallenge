@@ -11,7 +11,6 @@ using System.Threading;
 using ElevatorChallenge;
 
 FileLogger log = new FileLogger();
-
 buttons elevatorButtons = new buttons(1,1);
 sensor elevatorSensor = sensor.createSensor(10, 1, 1, 1000, 1, 1, false);
 elevator elevator = new elevator(1,1,0,false);
