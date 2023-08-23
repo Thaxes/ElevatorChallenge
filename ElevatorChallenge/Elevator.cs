@@ -13,39 +13,49 @@ namespace ElevatorChallenge
     public class buttons
     {
         private int floor;
-        private bool direction;
-        public buttons(int floor, bool direction)
+        private int direction;
+        private bool quit;
+        public buttons(int floor, int direction)
         {
             this.floor = floor;
             this.direction = direction;
+            this.quit = false;
         }
         //getters and setters
+        public bool getQuit()
+        {
+            return quit;
+        }
         public int getFloor()
         {
             return floor;
         }
-        public bool getDirection()
+        public int getDirection()
         {
             return direction;
+        }
+        public void setQuit(bool quit)
+        {
+            this.quit = quit;
         }
         public void setFloor(int floor)
         {
             this.floor = floor;
         }
-        public void setDirection(bool direction)
+        public void setDirection(int direction)
         {
             this.direction = direction;
         }
         //update the sensor object with the floor and direction flags
         public void updateSensor(sensor elevatorSensor)
         {
-            if (this.direction == true)
+            if (this.direction == 1)
             {
                 if (floor > 0 && floor < elevatorSensor.getFloorLimit())
                     elevatorSensor.onButtonsUp(floor);  
                 elevatorSensor.onButtonsUp(floor);
             }
-            else
+            else if (this.direction == 2)
             {
                 if (floor > 0 && floor < elevatorSensor.getFloorLimit())
                     elevatorSensor.onButtonsDown(floor);
@@ -67,6 +77,7 @@ namespace ElevatorChallenge
         private int currentWeight;
         private int direction;
         private bool moving;
+        private bool quit;
         private bool[] buttonsUp;
         private bool[] buttonsDown;
         private bool[] elevatorButtons;
@@ -83,6 +94,7 @@ namespace ElevatorChallenge
             this.buttonsUp = new bool[floorLimit];
             this.buttonsDown = new bool[floorLimit];
             this.elevatorButtons = new bool[floorLimit];
+            this.quit = false;
         }
         //public static method to create a sensor object with restrictions on the input
         public static sensor createSensor(int floorLimit, int currentFloor, int DestinationFloor, int weightLimit, int currentWeight, int direction, bool moving)
@@ -209,6 +221,11 @@ namespace ElevatorChallenge
                         }
                     }
                 }
+            }
+            else if ()
+            {
+                //quit thread
+
             }
         }
         //if elevator is moving up, it will scan for the next floor with a button pressed. It will skip the very next floor because it is already going up. It will return true if it finds a button.
@@ -381,6 +398,10 @@ namespace ElevatorChallenge
         {
             return currentFloor;
         }
+        public bool getQuit()
+        {
+            return quit;
+        }
         //return the destination floor.
         public int getDestinationFloor()
         {
@@ -442,6 +463,10 @@ namespace ElevatorChallenge
             this.floorLimit = floorLimit;
         }
         //set the current floor the elevator is on.
+        public void setQuit(bool quit)
+        {
+            this.quit = quit;
+        }
         public void setCurrentFloor(int currentFloor)
         {
             this.currentFloor = currentFloor;

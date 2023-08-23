@@ -62,13 +62,13 @@ readInput(elevatorButtons);
 
                 if (alphaPart == "u" || alphaPart == "U")
                 {
-                    elevatorButtons.setDirection(true);
+                    elevatorButtons.setDirection(1);
                     elevatorButtons.setFloor(numericPart);
                     Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
                 }
                 else if (alphaPart == "D" || alphaPart == "d")
                 {
-                    elevatorButtons.setDirection(false);
+                    elevatorButtons.setDirection(2);
                     elevatorButtons.setFloor(numericPart);
                     Console.WriteLine("Floor: " + elevatorButtons.getFloor() + " Direction: " + elevatorButtons.getDirection());
                 }
